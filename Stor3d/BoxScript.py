@@ -1,6 +1,7 @@
 import bpy
 import bmesh
 import sys
+import subprocess
 
 # Representation of all inserts, index 0 will contain the box insert
 allInserts = []
@@ -78,6 +79,9 @@ def draw_simple_cube(dimensions):
     allInserts.insert(0, bm)
     # print(allInserts)
 
+    for area in bpy.context.screen.areas:
+        if area.type == 'VIEW_3D':
+            area.spaces[0].region_3d.view_perspective = 'CAMERA'
     # bpy.ops.view3d.viewnumpad(type='CAMERA')
 
 
@@ -120,6 +124,15 @@ def position_camera(x, y, z):
     scene.camera.location.z = tz
 
 
+def save_object_creation():
+    bpy.data.scenes
+    # bpy.context.space_data.context = 'SCENE'
+    # bpy.ops.script.python_file_run(
+    #     filepath="C:\\Program Files\\Blender Foundation\\Blender\\2.79\\scripts\\presets\\units_length\\inches.py")
+    # subprocess.Popen("--python", "C:\\Program Files\\Blender Foundation\\Blender\\2.79\\scripts\\presets\\units_length\\inches.py")
+    bpy.ops.wm.save_as_mainfile(filepath='boxinsert.blend')
+
+
 def scratch_cube_creation():
     read_dimensions()
 
@@ -127,6 +140,7 @@ def scratch_cube_creation():
 def register():
     # bpy.utils.register_class(LayoutDemoPanel)
     scratch_cube_creation()
+    save_object_creation()
 
 
 # def unregister():
