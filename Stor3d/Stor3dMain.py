@@ -9,6 +9,8 @@ import Stor3d_ui
 
 class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
 
+    filecounter = 1;
+
     def __init__(self):
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -23,13 +25,20 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         self.boxHeight.textChanged.connect(self.check_state)
         self.boxWidth.textChanged.connect(self.check_state)
 
-        self.submitBoxDimensions.clicked.connect(self.submit_dimensions)
+        self.renderDimensions.clicked.connect(self.submit_dimensions)
+        self.generateSTLFile.clicked.connect(self.generate_stlfile)
 
     def write_dimensions(self):
         file = open('dimensions.txt', 'w')
         file.write('x=' + self.boxLength.text() + '\n')
         file.write('y=' + self.boxWidth.text() + '\n')
         file.write('z=' + self.boxHeight.text() + '\n')
+        file.write('fileIteration=' + str(self.filecounter) + '\n')
+        file.close()
+
+    def write_readytoprint(self, print_status):
+        file = open('readytoprint.txt', 'w')
+        file.write(str(print_status))
         file.close()
 
     def read_dimensions(self):
@@ -41,6 +50,7 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         print(dimensions[0])
         print(dimensions[1])
         print(dimensions[2])
+        print(dimensions[3])
         thickness = self.calculate_thickness(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
         print(thickness)
 
@@ -49,13 +59,32 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
 
     def submit_dimensions(self):
         self.write_dimensions()
-        self.read_dimensions()
+        self.write_readytoprint(False)
+        # self.read_dimensions()
 
         args = ['C:\\Program Files\\Blender Foundation\\Blender\\blender.exe',
-                '--python',
+                '--background', '--python',
                 'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\BoxScript.py']
-        # print(self.dimensions)
         subprocess.Popen(args)
+        self.generateSTLFile.setEnabled(True)
+
+        self.render_pic()
+
+    def render_pic(self):
+        QThread.sleep(1)
+        pixmap = QPixmap('C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\insert.png')
+        finalPixmap = pixmap.scaled(512, 288, Qt.KeepAspectRatio)
+        self.insert_picture.setPixmap(finalPixmap)
+
+    def generate_stlfile(self):
+        self.write_readytoprint(True)
+
+        args = ['C:\\Program Files\\Blender Foundation\\Blender\\blender.exe',
+                '--background', '--python',
+                'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\BoxScript.py']
+        subprocess.Popen(args)
+
+        self.filecounter += 1
 
     def check_state(self):
         sender = self.sender()
@@ -79,9 +108,9 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         heightState = validator.validate(self.boxHeight.text(), 0)[0]
 
         if lengthState == QValidator.Acceptable and widthState == QValidator.Acceptable and heightState == QValidator.Acceptable:
-            self.submitBoxDimensions.setEnabled(True)
+            self.renderDimensions.setEnabled(True)
         else:
-            self.submitBoxDimensions.setEnabled(False)
+            self.renderDimensions.setEnabled(False)
 
 
 app = QApplication(sys.argv)

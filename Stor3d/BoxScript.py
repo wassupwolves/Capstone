@@ -5,6 +5,7 @@ import subprocess
 
 # Representation of all inserts, index 0 will contain the box insert
 allInserts = []
+fileIteration = 0
 
 
 def read_dimensions():
@@ -12,6 +13,7 @@ def read_dimensions():
     file = open('dimensions.txt', 'r')
     for line in file:
         dimensions += line.strip().split('=')[1:]
+    fileIteration = dimensions[3]
     draw_simple_cube(dimensions)
 
 
@@ -89,7 +91,7 @@ def position_camera(x, y, z):
     biggestside = x
     if y > x:
         biggestside = y
-    if z > y:
+    if z > y and z > x:
         biggestside = z
     tx = biggestside * 2
     ty = -biggestside * 2
@@ -125,12 +127,25 @@ def position_camera(x, y, z):
 
 
 def save_object_creation():
-    bpy.data.scenes
-    # bpy.context.space_data.context = 'SCENE'
-    # bpy.ops.script.python_file_run(
-    #     filepath="C:\\Program Files\\Blender Foundation\\Blender\\2.79\\scripts\\presets\\units_length\\inches.py")
-    # subprocess.Popen("--python", "C:\\Program Files\\Blender Foundation\\Blender\\2.79\\scripts\\presets\\units_length\\inches.py")
-    bpy.ops.wm.save_as_mainfile(filepath='boxinsert.blend')
+    bpy.ops.wm.save_as_mainfile(filepath='boxinsert' + str(fileIteration) + '.blend')
+    # bpy.ops.image.save_as(save_as_render=True, copy=True, filepath="//untitled.png", relative_path=True,
+    #                       show_multiview=False, use_multiview=False)
+    bpy.ops.render.render()
+    bpy.data.images['Render Result'].save_render(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\insert.png")
+
+
+def save_stlfile():
+    lines = []
+    file = open('readytoprint.txt', 'r')
+    for line in file:
+        lines += line
+    readytoprint = bool(lines[0])
+    if(readytoprint):
+        generate_stl()
+
+
+def generate_stl():
+    pass
 
 
 def scratch_cube_creation():
@@ -141,6 +156,7 @@ def register():
     # bpy.utils.register_class(LayoutDemoPanel)
     scratch_cube_creation()
     save_object_creation()
+    save_stlfile()
 
 
 # def unregister():
