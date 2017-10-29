@@ -13,12 +13,15 @@ def read_dimensions():
     file = open('dimensions.txt', 'r')
     for line in file:
         dimensions += line.strip().split('=')[1:]
+
+    global fileIteration
     fileIteration = dimensions[3]
+
     draw_simple_cube(dimensions)
 
 
 def calculate_thickness(x, y, z):
-    return ((x * 0.05) + (y * 0.05) + (z * 0.05)) / 3
+    return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
 
 
 def draw_simple_cube(dimensions):
@@ -127,25 +130,26 @@ def position_camera(x, y, z):
 
 
 def save_object_creation():
-    bpy.ops.wm.save_as_mainfile(filepath='boxinsert' + str(fileIteration) + '.blend')
+    bpy.ops.wm.save_as_mainfile(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\BlendFiles\\BoxInsert" + str(fileIteration) + ".blend")
     # bpy.ops.image.save_as(save_as_render=True, copy=True, filepath="//untitled.png", relative_path=True,
     #                       show_multiview=False, use_multiview=False)
     bpy.ops.render.render()
-    bpy.data.images['Render Result'].save_render(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\insert.png")
+    bpy.data.images['Render Result'].save_render(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Picture\\BoxInsert" + str(fileIteration) + ".png")
 
 
-def save_stlfile():
-    lines = []
-    file = open('readytoprint.txt', 'r')
-    for line in file:
-        lines += line
-    readytoprint = bool(lines[0])
-    if(readytoprint):
-        generate_stl()
+# def save_stlfile():
+#     lines = []
+#     file = open('readytoprint.txt', 'r')
+#     for line in file:
+#         lines += line
+#     readytoprint = bool(lines[0])
+#     if(readytoprint):
+#         generate_stl()
 
 
 def generate_stl():
-    pass
+    bpy.ops.export_mesh.stl(filepath='C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\STLFiles\\BoxInsert' + str(fileIteration) + '.stl')
+    # bpy.ops.export_mesh.stl(filepath="C:/Users/User/Documents/Pyticle/Volume Blender/Bob.stl")
 
 
 def scratch_cube_creation():
@@ -156,7 +160,7 @@ def register():
     # bpy.utils.register_class(LayoutDemoPanel)
     scratch_cube_creation()
     save_object_creation()
-    save_stlfile()
+    generate_stl()
 
 
 # def unregister():
