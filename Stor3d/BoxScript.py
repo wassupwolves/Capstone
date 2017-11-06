@@ -3,8 +3,7 @@ import bmesh
 import sys
 import subprocess
 
-# Representation of all inserts, index 0 will contain the box insert
-allInserts = []
+# This is a counter to help make unique files
 fileIteration = 0
 
 
@@ -28,20 +27,50 @@ def draw_simple_cube(dimensions):
 
     position_camera(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
 
-    bpy.data.objects['Cube'].select = True  # Select the default Blender Cube
+    # Select the default Blender Cube
+    bpy.data.objects['Cube'].select = True
     bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.delete()  # Delete the selected objects (default blender Cube)
+    # Delete the selected objects (default blender Cube)
+    bpy.ops.object.delete()
 
     # Define vertices, faces, edges
     verts = [(-float(dimensions[0])/2, -float(dimensions[1])/2, -float(dimensions[2])/2),
-             (-float(dimensions[0])/2, float(dimensions[1])/2, -float(dimensions[2])/2),
-             (float(dimensions[0])/2, float(dimensions[1])/2, -float(dimensions[2])/2),
-             (float(dimensions[0])/2, -float(dimensions[1])/2, -float(dimensions[2])/2  ),
-             (-float(dimensions[0])/2, -float(dimensions[1])/2, float(dimensions[2])/2),
-             (-float(dimensions[0])/2, float(dimensions[1])/2, float(dimensions[2])/2),
-             (float(dimensions[0])/2, float(dimensions[1])/2, float(dimensions[2])/2),
-             (float(dimensions[0])/2, -float(dimensions[1])/2, float(dimensions[2])/2)]
+             (-float(dimensions[0])/2,  float(dimensions[1])/2, -float(dimensions[2])/2),
+             ( float(dimensions[0])/2,  float(dimensions[1])/2, -float(dimensions[2])/2),
+             ( float(dimensions[0])/2, -float(dimensions[1])/2, -float(dimensions[2])/2),
+             (-float(dimensions[0])/2, -float(dimensions[1])/2,  float(dimensions[2])/2),
+             (-float(dimensions[0])/2,  float(dimensions[1])/2,  float(dimensions[2])/2),
+             ( float(dimensions[0])/2,  float(dimensions[1])/2,  float(dimensions[2])/2),
+             ( float(dimensions[0])/2, -float(dimensions[1])/2,  float(dimensions[2])/2)]
     faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]
+
+    # Length cell points being added
+    for i in range(1, int(dimensions[4])):
+        x = float(dimensions[0]) / float(dimensions[4])
+        corner = -float(dimensions[0]) / 2
+        dx = (x * i) + corner
+
+        verts.append((float(dx), -float(dimensions[1])/2, -float(dimensions[2])/2))
+        verts.append((float(dx), -float(dimensions[1])/2,  float(dimensions[2])/2))
+        verts.append((float(dx),  float(dimensions[1])/2,  float(dimensions[2])/2))
+        verts.append((float(dx),  float(dimensions[1])/2, -float(dimensions[2])/2))
+
+    # Width cell points being added
+    for i in range(1, int(dimensions[5])):
+        y = float(dimensions[1]) / float(dimensions[5])
+        corner = -float(dimensions[1]) / 2
+        dy = (y * i) + corner
+
+        verts.append(( float(dimensions[0])/2, float(dy), -float(dimensions[2]) / 2))
+        verts.append(( float(dimensions[0])/2, float(dy),  float(dimensions[2]) / 2))
+        verts.append((-float(dimensions[0])/2, float(dy),  float(dimensions[2]) / 2))
+        verts.append((-float(dimensions[0])/2, float(dy), -float(dimensions[2]) / 2))
+
+    # Connect all faces and add to faces array
+    for i in range(0, ((int(dimensions[4])-1) + (int(dimensions[5])-1))):
+        index = (i * 4)
+        face = ((index+8), (index+9), (index+10), (index+11))
+        faces.append(face)
 
     # Define mesh and object
     mesh = bpy.data.meshes.new("Cube")
@@ -78,16 +107,13 @@ def draw_simple_cube(dimensions):
     bpy.ops.object.modifier_add(type="SOLIDIFY")
     bpy.data.objects["Cube"].modifiers["Solidify"].thickness = thickness
     bpy.data.objects["Cube"].modifiers["Solidify"].use_even_offset = True
+    bpy.data.objects["Cube"].modifiers["Solidify"].offset = 0
     bpy.ops.object.mode_set(mode="OBJECT")
     bpy.ops.object.modifier_apply(apply_as="DATA", modifier="Solidify")
-
-    allInserts.insert(0, bm)
-    # print(allInserts)
 
     for area in bpy.context.screen.areas:
         if area.type == 'VIEW_3D':
             area.spaces[0].region_3d.view_perspective = 'CAMERA'
-    # bpy.ops.view3d.viewnumpad(type='CAMERA')
 
 
 def position_camera(x, y, z):
@@ -131,25 +157,12 @@ def position_camera(x, y, z):
 
 def save_object_creation():
     bpy.ops.wm.save_as_mainfile(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\BlendFiles\\BoxInsert" + str(fileIteration) + ".blend")
-    # bpy.ops.image.save_as(save_as_render=True, copy=True, filepath="//untitled.png", relative_path=True,
-    #                       show_multiview=False, use_multiview=False)
     bpy.ops.render.render()
     bpy.data.images['Render Result'].save_render(filepath="C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Picture\\BoxInsert" + str(fileIteration) + ".png")
 
 
-# def save_stlfile():
-#     lines = []
-#     file = open('readytoprint.txt', 'r')
-#     for line in file:
-#         lines += line
-#     readytoprint = bool(lines[0])
-#     if(readytoprint):
-#         generate_stl()
-
-
 def generate_stl():
     bpy.ops.export_mesh.stl(filepath='C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\STLFiles\\BoxInsert' + str(fileIteration) + '.stl')
-    # bpy.ops.export_mesh.stl(filepath="C:/Users/User/Documents/Pyticle/Volume Blender/Bob.stl")
 
 
 def scratch_cube_creation():
@@ -157,14 +170,9 @@ def scratch_cube_creation():
 
 
 def register():
-    # bpy.utils.register_class(LayoutDemoPanel)
     scratch_cube_creation()
     save_object_creation()
     generate_stl()
-
-
-# def unregister():
-#     bpy.utils.unregister_class(LayoutDemoPanel)
 
 
 if __name__ == "__main__":

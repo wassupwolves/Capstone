@@ -13,12 +13,15 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
     filecounter = 1;
 
     def __init__(self):
-        self.delete_previous_iterations()
+        self.delete_previous_iterations("C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\BlendFiles")
+        self.delete_previous_iterations("C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Picture")
+        self.delete_previous_iterations("C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\STLFiles")
 
         QMainWindow.__init__(self)
         self.setupUi(self)
 
         validator = QDoubleValidator()
+        validator.setBottom(0)
 
         self.boxLength.setValidator(validator)
         self.boxWidth.setValidator(validator)
@@ -35,8 +38,9 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         self.lengthCellSlider.sliderReleased.connect(self.update_lengthLabel)
         self.widthCellSlider.sliderReleased.connect(self.update_widthLabel)
 
-    def delete_previous_iterations(self):
-        dirPath = "C:\\Users\\Jayson\Documents\\Quarters7-9\\9Capstone\\Picture"
+
+    def delete_previous_iterations(self, fileDirectory):
+        dirPath = fileDirectory
         fileList = os.listdir(dirPath)
         for fileName in fileList:
             os.remove(dirPath + "\\" + fileName)
@@ -65,11 +69,6 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         file.write('widthCellCount=' + str(self.widthCellSlider.value()) + '\n')
         file.close()
 
-    # def write_readytoprint(self, print_status):
-    #     file = open('readytoprint.txt', 'w')
-    #     file.write(str(print_status))
-    #     file.close()
-
     def read_dimensions(self):
         dimensions = []
         file = open('dimensions.txt', 'r')
@@ -84,13 +83,15 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         print(thickness)
 
     def calculate_thickness(self, x, y, z):
-        return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
+        return 0.07
+        # return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
 
     def submit_dimensions(self):
         self.write_dimensions()
         # self.write_readytoprint(False)
         self.read_dimensions()
 
+        # Argument array to open Blender and pass certain flags for Blender to operate with
         args = ['C:\\Program Files\\Blender Foundation\\Blender\\blender.exe',
                 '--background', '--python',
                 'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\BoxScript.py']
@@ -106,13 +107,6 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         self.insert_picture.setPixmap(pixmap)
 
     def finalize_dimensions(self):
-        # self.write_readytoprint(True)
-        #
-        # args = ['C:\\Program Files\\Blender Foundation\\Blender\\blender.exe',
-        #         '--background', '--python',
-        #         'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\BoxScript.py']
-        # subprocess.Popen(args)
-
         self.filecounter += 1
 
     def check_state(self):
@@ -145,13 +139,15 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
             if self.boxLength.text()[0] == '.':
                 self.lengthCellSlider.setMaximum(1)
             else:
-                self.lengthCellSlider.setMaximum(int(self.boxLength.text()[0]))
+                self.lengthCellSlider.setMaximum(int(self.boxLength.text().split('.')[0]))
+                self.update_lengthLabel()
 
         if len(self.boxWidth.text()) != 0:
             if self.boxWidth.text()[0] == '.':
                 self.widthCellSlider.setMaximum(1)
             else:
-                self.widthCellSlider.setMaximum(int(self.boxWidth.text()[0]))
+                self.widthCellSlider.setMaximum(int(self.boxWidth.text().split('.')[0]))
+                self.update_widthLabel()
 
         if len(self.boxLength.text()) != 0 and len(self.boxWidth.text()) != 0:
             self.slottedCheckBox.setEnabled(True)

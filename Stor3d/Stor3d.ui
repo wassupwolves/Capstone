@@ -18,6 +18,24 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>6</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Objects with dimensions bigger than &quot;23&quot; in any category may not render properly</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -87,7 +105,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="">
+       <widget class="QGroupBox" name="groupBox">
         <property name="maximumSize">
          <size>
           <width>16777215</width>

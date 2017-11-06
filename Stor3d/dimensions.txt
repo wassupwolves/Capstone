@@ -1,6 +1,6 @@
-x=3
+x=10
 y=3
 z=3
-fileIteration=2
-lengthCellCount=1
-widthCellCount=1
+fileIteration=1
+lengthCellCount=5
+widthCellCount=3
