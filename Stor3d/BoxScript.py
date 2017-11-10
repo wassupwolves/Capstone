@@ -20,7 +20,8 @@ def read_dimensions():
 
 
 def calculate_thickness(x, y, z):
-    return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
+    # return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
+    return 0.07
 
 
 def draw_simple_cube(dimensions):
@@ -34,15 +35,18 @@ def draw_simple_cube(dimensions):
     bpy.ops.object.delete()
 
     # Define vertices, faces, edges
-    verts = [(-float(dimensions[0])/2, -float(dimensions[1])/2, -float(dimensions[2])/2),
-             (-float(dimensions[0])/2,  float(dimensions[1])/2, -float(dimensions[2])/2),
-             ( float(dimensions[0])/2,  float(dimensions[1])/2, -float(dimensions[2])/2),
-             ( float(dimensions[0])/2, -float(dimensions[1])/2, -float(dimensions[2])/2),
-             (-float(dimensions[0])/2, -float(dimensions[1])/2,  float(dimensions[2])/2),
-             (-float(dimensions[0])/2,  float(dimensions[1])/2,  float(dimensions[2])/2),
-             ( float(dimensions[0])/2,  float(dimensions[1])/2,  float(dimensions[2])/2),
-             ( float(dimensions[0])/2, -float(dimensions[1])/2,  float(dimensions[2])/2)]
+    verts = [(-float(dimensions[0]) / 2, -float(dimensions[1]) / 2, -float(dimensions[2]) / 2), # 0
+             (-float(dimensions[0]) / 2,  float(dimensions[1]) / 2, -float(dimensions[2]) / 2), # 1
+             ( float(dimensions[0]) / 2,  float(dimensions[1]) / 2, -float(dimensions[2]) / 2), # 2
+             ( float(dimensions[0]) / 2, -float(dimensions[1]) / 2, -float(dimensions[2]) / 2), # 3
+             (-float(dimensions[0]) / 2, -float(dimensions[1]) / 2,  float(dimensions[2]) / 2), # 4
+             (-float(dimensions[0]) / 2,  float(dimensions[1]) / 2,  float(dimensions[2]) / 2), # 5
+             ( float(dimensions[0]) / 2,  float(dimensions[1]) / 2,  float(dimensions[2]) / 2), # 6
+             ( float(dimensions[0]) / 2, -float(dimensions[1]) / 2,  float(dimensions[2]) / 2)] # 7
     faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 4, 5, 1), (1, 5, 6, 2), (2, 6, 7, 3), (3, 7, 4, 0)]
+
+    ##################################################################################
+    # Cells being added to the Cube
 
     # Length cell points being added
     for i in range(1, int(dimensions[4])):
@@ -50,10 +54,10 @@ def draw_simple_cube(dimensions):
         corner = -float(dimensions[0]) / 2
         dx = (x * i) + corner
 
-        verts.append((float(dx), -float(dimensions[1])/2, -float(dimensions[2])/2))
-        verts.append((float(dx), -float(dimensions[1])/2,  float(dimensions[2])/2))
-        verts.append((float(dx),  float(dimensions[1])/2,  float(dimensions[2])/2))
-        verts.append((float(dx),  float(dimensions[1])/2, -float(dimensions[2])/2))
+        verts.append((float(dx), -float(dimensions[1]) / 2, -float(dimensions[2]) / 2))
+        verts.append((float(dx), -float(dimensions[1]) / 2,  float(dimensions[2]) / 2))
+        verts.append((float(dx),  float(dimensions[1]) / 2,  float(dimensions[2]) / 2))
+        verts.append((float(dx),  float(dimensions[1]) / 2, -float(dimensions[2]) / 2))
 
     # Width cell points being added
     for i in range(1, int(dimensions[5])):
@@ -61,16 +65,70 @@ def draw_simple_cube(dimensions):
         corner = -float(dimensions[1]) / 2
         dy = (y * i) + corner
 
-        verts.append(( float(dimensions[0])/2, float(dy), -float(dimensions[2]) / 2))
-        verts.append(( float(dimensions[0])/2, float(dy),  float(dimensions[2]) / 2))
-        verts.append((-float(dimensions[0])/2, float(dy),  float(dimensions[2]) / 2))
-        verts.append((-float(dimensions[0])/2, float(dy), -float(dimensions[2]) / 2))
+        verts.append(( float(dimensions[0]) / 2, float(dy), -float(dimensions[2]) / 2))
+        verts.append(( float(dimensions[0]) / 2, float(dy),  float(dimensions[2]) / 2))
+        verts.append((-float(dimensions[0]) / 2, float(dy),  float(dimensions[2]) / 2))
+        verts.append((-float(dimensions[0]) / 2, float(dy), -float(dimensions[2]) / 2))
 
     # Connect all faces and add to faces array
     for i in range(0, ((int(dimensions[4])-1) + (int(dimensions[5])-1))):
         index = (i * 4)
         face = ((index+8), (index+9), (index+10), (index+11))
         faces.append(face)
+    ##################################################################################
+
+    ##################################################################################
+    # Lid being added to the Cube
+
+    middleOffset = calculate_thickness(dimensions[0], dimensions[1], dimensions[2])
+    heightOffset = 0.1
+
+    verts2 = []
+    faces2 = []
+
+    if str(dimensions[6]) == 'True':
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2, (-float(dimensions[1]) - middleOffset) / 2,  float(dimensions[2]) / 2))
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2, ( float(dimensions[1]) + middleOffset) / 2,  float(dimensions[2]) / 2))
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2, ( float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        face = (len(verts2) - 4, len(verts2) - 3, len(verts2) - 2, len(verts2) - 1)
+        faces2.append(face)
+
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2,  (float(dimensions[1]) + (middleOffset / 2)) / 2,  float(dimensions[2]) / 2))
+        verts2.append((( float(dimensions[0]) + (middleOffset / 2)) / 2,  (float(dimensions[1]) + (middleOffset / 2)) / 2,  float(dimensions[2]) / 2))
+        verts2.append((( float(dimensions[0]) + (middleOffset / 2)) / 2,  (float(dimensions[1]) + (middleOffset / 2)) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts2.append(((-float(dimensions[0]) - (middleOffset / 2)) / 2,  (float(dimensions[1]) + (middleOffset / 2)) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        face = (len(verts2) - 4, len(verts2) - 3, len(verts2) - 2, len(verts2) - 1)
+        faces2.append(face)
+
+        verts2.append(((float(dimensions[0]) + (middleOffset / 2)) / 2,  (float(dimensions[1]) + middleOffset) / 2,  float(dimensions[2]) / 2))
+        verts2.append(((float(dimensions[0]) + (middleOffset / 2)) / 2, (-float(dimensions[1]) - middleOffset) / 2,  float(dimensions[2]) / 2))
+        verts2.append(((float(dimensions[0]) + (middleOffset / 2)) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts2.append(((float(dimensions[0]) + (middleOffset / 2)) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        face = (len(verts2) - 4, len(verts2) - 3, len(verts2) - 2, len(verts2) - 1)
+        faces2.append(face)
+
+        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
+        faces.append(face)
+
+        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
+        faces.append(face)
+
+        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
+        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
+        faces.append(face)
+    ##################################################################################
 
     # Define mesh and object
     mesh = bpy.data.meshes.new("Cube")
@@ -102,14 +160,34 @@ def draw_simple_cube(dimensions):
     thickness = calculate_thickness(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
 
     # Enter "modifier mode" to give the faces thickness
-    for face in bm.faces:
-        face.select = True
+    # for face in bm.faces:
+    #     face.select = True
+
     bpy.ops.object.modifier_add(type="SOLIDIFY")
     bpy.data.objects["Cube"].modifiers["Solidify"].thickness = thickness
     bpy.data.objects["Cube"].modifiers["Solidify"].use_even_offset = True
     bpy.data.objects["Cube"].modifiers["Solidify"].offset = 0
     bpy.ops.object.mode_set(mode="OBJECT")
     bpy.ops.object.modifier_apply(apply_as="DATA", modifier="Solidify")
+
+    if str(dimensions[6]) == 'True':
+        mesh2 = bpy.data.meshes.new("Cube2")
+        object2 = bpy.data.objects.new("Cube2", mesh2)
+        object2.location = bpy.context.scene.cursor_location
+        bpy.context.scene.objects.link(object2)
+        mesh2.from_pydata(verts2, [], faces2)
+        mesh2.update(calc_edges=True)
+        bpy.data.objects["Cube2"].select = True
+        bpy.context.scene.objects.active = bpy.context.scene.objects["Cube2"]
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.normals_make_consistent(inside=False)
+
+        bpy.ops.object.modifier_add(type="SOLIDIFY")
+        bpy.data.objects["Cube2"].modifiers["Solidify"].thickness = thickness / 2
+        bpy.data.objects["Cube2"].modifiers["Solidify"].use_even_offset = True
+        bpy.data.objects["Cube2"].modifiers["Solidify"].offset = 0
+        bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.modifier_apply(apply_as="DATA", modifier="Solidify")
 
     for area in bpy.context.screen.areas:
         if area.type == 'VIEW_3D':

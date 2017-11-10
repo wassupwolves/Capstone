@@ -67,6 +67,7 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         file.write('fileIteration=' + str(self.filecounter) + '\n')
         file.write('lengthCellCount=' + str(self.lengthCellSlider.value()) + '\n')
         file.write('widthCellCount=' + str(self.widthCellSlider.value()) + '\n')
+        file.write('lid=' + str(self.lidCheckBox.isChecked()) + '\n')
         file.close()
 
     def read_dimensions(self):
@@ -84,7 +85,7 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
 
     def calculate_thickness(self, x, y, z):
         return 0.07
-        # return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 3
+        # return ((x * 0.025) + (y * 0.025) + (z * 0.025)) / 33 3   3
 
     def submit_dimensions(self):
         self.write_dimensions()
@@ -96,6 +97,12 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
                 '--background', '--python',
                 'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\BoxScript.py']
         subprocess.Popen(args)
+        if self.lidCheckBox.isChecked():
+            args = ['C:\\Program Files\\Blender Foundation\\Blender\\blender.exe',
+                    '--background', '--python',
+                    'C:\\Users\\Jayson\\Documents\\Quarters7-9\\9Capstone\\Stor3d\\LidScript.py']
+            subprocess.Popen(args)
+
         self.generateSTLFile.setEnabled(True)
 
         self.render_pic()

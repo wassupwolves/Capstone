@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>545</width>
+    <width>562</width>
     <height>448</height>
    </rect>
   </property>
@@ -231,6 +231,16 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="lidCheckBox">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Lid?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="renderDimensions">
         <property name="enabled">
          <bool>false</bool>
@@ -275,7 +285,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>545</width>
+     <width>562</width>
      <height>26</height>
     </rect>
    </property>
