@@ -1,7 +1,7 @@
 x=2
 y=5
-z=2
+z=3
 fileIteration=1
-lengthCellCount=1
-widthCellCount=1
+lengthCellCount=2
+widthCellCount=2
 lid=True

@@ -82,6 +82,7 @@ def draw_simple_cube(dimensions):
 
     middleOffset = calculate_thickness(dimensions[0], dimensions[1], dimensions[2])
     heightOffset = 0.1
+    heightAdjustment = heightOffset * 1.5
 
     verts2 = []
     faces2 = []
@@ -108,24 +109,24 @@ def draw_simple_cube(dimensions):
         face = (len(verts2) - 4, len(verts2) - 3, len(verts2) - 2, len(verts2) - 1)
         faces2.append(face)
 
-        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
-        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append((-float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
+        verts.append((-float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
         face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
         faces.append(face)
 
-        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
-        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append(( float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
+        verts.append((-float(dimensions[0]) / 2, float(dimensions[1]) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
         face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
         faces.append(face)
 
-        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) +  heightOffset))
-        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
-        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + (heightOffset * 2)))
+        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightOffset))
+        verts.append((float(dimensions[0]) / 2, (-float(dimensions[1]) - middleOffset) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
+        verts.append((float(dimensions[0]) / 2,  (float(dimensions[1]) + middleOffset) / 2, (float(dimensions[2]) / 2) + heightAdjustment))
         face = (len(verts) - 4, len(verts) - 3, len(verts) - 2, len(verts) - 1)
         faces.append(face)
     ##################################################################################
@@ -231,6 +232,8 @@ def position_camera(x, y, z):
     scene.camera.location.x = tx
     scene.camera.location.y = ty
     scene.camera.location.z = tz
+
+    bpy.data.cameras["Camera"].clip_end = biggestside * 12
 
 
 def save_object_creation():

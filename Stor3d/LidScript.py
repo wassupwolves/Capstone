@@ -33,18 +33,21 @@ def draw_simple_cube(dimensions):
     bpy.ops.object.delete()
 
     thickness = calculate_thickness(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
+    xOffset = thickness / 4
 
     # Define vertices, faces, edges
-    verts = [(-(float(dimensions[0]) / 2) + (thickness / 2), -float(dimensions[1]) / 2, -thickness / 2),  # 0
-             (-(float(dimensions[0]) / 2) + (thickness / 2),  float(dimensions[1]) / 2, -thickness / 2),  # 1
-             ( (float(dimensions[0]) / 2) - (thickness / 2),  float(dimensions[1]) / 2, -thickness / 2),  # 2
-             ( (float(dimensions[0]) / 2) - (thickness / 2), -float(dimensions[1]) / 2, -thickness / 2),  # 3
-             # (-float(dimensions[0]) / 2, -float(dimensions[1]) / 2,  thickness / 2),  # 4
-             # (-float(dimensions[0]) / 2,  float(dimensions[1]) / 2,  thickness / 2),  # 5
-             # ( float(dimensions[0]) / 2,  float(dimensions[1]) / 2,  thickness / 2),  # 6
-             # ( float(dimensions[0]) / 2, -float(dimensions[1]) / 2,  thickness / 2)
-            ]  # 7
-    faces = [(0, 1, 2, 3)]
+    verts = [(-(float(dimensions[0]) / 2) + xOffset, -float(dimensions[1]) / 2, -thickness / 2),  # 0
+             (-(float(dimensions[0]) / 2) + xOffset,  float(dimensions[1]) / 2, -thickness / 2),  # 1
+             ( (float(dimensions[0]) / 2) - xOffset,  float(dimensions[1]) / 2, -thickness / 2),  # 2
+             ( (float(dimensions[0]) / 2) - xOffset, -float(dimensions[1]) / 2, -thickness / 2),  # 3
+
+             # Lip on the Lid
+             (-(float(dimensions[0]) / 2) + (xOffset * 4), (float(dimensions[1]) - thickness) / 2, -thickness / 2),
+             ( (float(dimensions[0]) / 2) - (xOffset * 4), (float(dimensions[1]) - thickness) / 2, -thickness / 2),
+             ( (float(dimensions[0]) / 2) - (xOffset * 4), (float(dimensions[1]) - thickness) / 2,  thickness),
+             (-(float(dimensions[0]) / 2) + (xOffset * 4), (float(dimensions[1]) - thickness) / 2,  thickness)
+             ]
+    faces = [(0, 1, 2, 3), (4, 5, 6, 7)]
 
     # Define mesh and object
     mesh = bpy.data.meshes.new("Cube")
@@ -61,6 +64,8 @@ def draw_simple_cube(dimensions):
     bpy.data.objects["Cube"].select = True
     # Select the default Blender Cube
     bpy.context.scene.objects.active = bpy.context.scene.objects["Cube"]
+
+    bpy.ops.object.mode_set(mode="EDIT")
 
     # thickness = calculate_thickness(float(dimensions[0]), float(dimensions[1]), float(dimensions[2]))
 

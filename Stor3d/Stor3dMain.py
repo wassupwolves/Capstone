@@ -5,10 +5,11 @@ import sys
 import subprocess
 import os
 
+import Stor3d2_ui
 import Stor3d_ui
 
 
-class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
+class Stored(QMainWindow, Stor3d2_ui.Ui_MainWindow):
 
     filecounter = 1;
 
@@ -22,6 +23,7 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
 
         validator = QDoubleValidator()
         validator.setBottom(0)
+        validator.setTop(100)
 
         self.boxLength.setValidator(validator)
         self.boxWidth.setValidator(validator)
@@ -121,12 +123,12 @@ class Stored(QMainWindow, Stor3d_ui.Ui_MainWindow):
         validator = sender.validator()
         state = validator.validate(sender.text(), 0)[0]
         if state == QValidator.Acceptable:
-            color = '#c4df9b'  # green
+            color = '#428BCA'  # green
         elif state == QValidator.Intermediate:
-            color = '#fff79a'  # yellow
+            color = '#D35F5A'  # yellow
         else:
-            color = '#f6989d'  # red
-        sender.setStyleSheet('QLineEdit { background-color: %s }' % color)
+            color = '#D35F5A'  # red
+        sender.setStyleSheet('QLineEdit { color: #eee; background-color: %s; }' % color)
 
         validator = self.boxLength.validator()
         lengthState = validator.validate(self.boxLength.text(), 0)[0]
